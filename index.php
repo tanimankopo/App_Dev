@@ -202,7 +202,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
                             </strong>
                         </td>
                         <td>
-                            <a href="?product_history=<?= $item['product_id'] ?>&category=<?= $cat_filter ?>&warehouse=<?= $wh_filter ?>" class="text-link">History →</a>
+                            <a href="javascript:void(0)" onclick="toggleHistory(<?= $item['product_id'] ?>)" class="text-link" id="history_arrow_<?= $item['product_id'] ?>">History ▼</a>
                             <a href="?delete_product=<?= $item['product_id'] ?>" class="text-link" onclick="return confirm('Delete this product and all its records?')" style="color: var(--danger); margin-left: 10px;">Delete</a>
                         </td>
                     </tr>
@@ -214,15 +214,16 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
         </div>
 
         <?php 
-        if (isset($_GET['product_history'])): 
-            $p_id = $_GET['product_history'];
+        // Generate history sections for all products
+        foreach($inventory_items as $item): 
+            $p_id = $item['product_id'];
             $h_stmt = $pdo->prepare("SELECT t.*, w.name as w_name, p.name as p_name FROM transactions t JOIN warehouses w ON t.warehouse_id = w.warehouse_id JOIN products p ON t.product_id = p.product_id WHERE t.product_id = ? ORDER BY t.transaction_date DESC");
             $h_stmt->execute([$p_id]);
             $history = $h_stmt->fetchAll();
             if ($history): 
         ?>
-            <section class="history-section">
-                <h3>Movement Logs: <?= htmlspecialchars($history[0]['p_name']) ?></h3>
+            <section class="history-section" id="history_<?= $p_id ?>" style="display: none;">
+                <h3>Movement Logs: <?= htmlspecialchars($item['product_name']) ?></h3>
                 <table>
                     <thead>
                         <tr>
@@ -243,9 +244,8 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <a href="index.php?category=<?= $cat_filter ?>&warehouse=<?= $wh_filter ?>" style="color: #999; font-size: 0.9rem; display: inline-block; margin-top: 15px;">Close History Log</a>
             </section>
-        <?php endif; endif; ?>
+        <?php endif; endforeach; ?>
     </main>
 
     <div id="prodModal" class="modal-overlay" style="display:none;">
@@ -304,6 +304,21 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleHistory(productId) {
+            const section = document.getElementById('history_' + productId);
+            const arrow = document.getElementById('history_arrow_' + productId);
+            
+            if (section.style.display === 'none' || section.style.display === '') {
+                section.style.display = 'block';
+                arrow.textContent = 'History ▲';
+            } else {
+                section.style.display = 'none';
+                arrow.textContent = 'History ▼';
+            }
+        }
+    </script>
 
 </body>
 </html>
