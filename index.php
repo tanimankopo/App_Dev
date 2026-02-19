@@ -97,10 +97,26 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
 
 
     <aside class="sidebar">
-    <h2>Warehouse Inventory</h2>
+        <h2>Warehouse Inventory</h2>
 
-    
-    <form method="GET">
+        <div class="sidebar-tabs" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+            <a href="index.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Inventory Overview</a>
+            <a href="suppliers.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Suppliers</a>
+            <a href="transactions.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Transactions</a>
+            <a href="warehouses.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Warehouses</a>
+        </div>
+
+    </aside>
+
+
+
+    <main class="main-content">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1>Inventory Overview</h1>
+
+
+
+            <form method="GET">
         <div class="filter-group">
             <label>Category</label>
             <select name="category">
@@ -129,23 +145,15 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
         <a href="index.php" style="display:block; text-align:center; color:#bdc3c7; margin-top:15px; text-decoration:none; font-size:0.8rem;">Reset Filters</a>
     </form>
 
-    <div class="sidebar-tabs" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
-        
-        <a href="suppliers.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Suppliers</a>
-        <a href="transactions.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Transactions</a>
-        <a href="warehouses.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Warehouses</a>
-    </div>
-
-</aside>
 
 
-
-
-
-    <main class="main-content">
-        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h1>Inventory Overview</h1>
             <div style="display: flex; gap: 10px;">
+
+
+
+
+
+            
                 <button onclick="document.getElementById('prodModal').style.display='flex'" style="width:auto; padding: 10px 20px;">+ New Product</button>
                 <button onclick="document.getElementById('transModal').style.display='flex'" style="width:auto; padding: 10px 20px; background: var(--primary);">+ Stock Movement</button>
             </div>
