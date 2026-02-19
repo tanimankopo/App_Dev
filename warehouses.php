@@ -109,7 +109,7 @@ $all_inventory = $stmt->fetchAll();
                             </strong>
                         </td>
                         <td>
-                            <a href="javascript:void(0)" onclick="toggleInventory(<?= $wh['warehouse_id'] ?>)" class="text-link">Details ▼</a>
+                            <a href="javascript:void(0)" onclick="toggleInventory(<?= $wh['warehouse_id'] ?>)" class="text-link" id="arrow_<?= $wh['warehouse_id'] ?>">Details ▼</a>
                             <a href="?delete_warehouse=<?= $wh['warehouse_id'] ?>" class="text-link" onclick="return confirm('Delete this warehouse and all its inventory records?')" style="color: var(--danger); margin-left: 10px;">Delete</a>
                         </td>
                     </tr>
@@ -178,10 +178,14 @@ $all_inventory = $stmt->fetchAll();
     <script>
         function toggleInventory(warehouseId) {
             const section = document.getElementById('wh_' + warehouseId);
+            const arrow = document.getElementById('arrow_' + warehouseId);
+            
             if (section.style.display === 'none' || section.style.display === '') {
                 section.style.display = 'block';
+                arrow.textContent = 'Details ▲';
             } else {
                 section.style.display = 'none';
+                arrow.textContent = 'Details ▼';
             }
         }
     </script>
