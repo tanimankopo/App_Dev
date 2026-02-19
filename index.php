@@ -2,14 +2,30 @@
 require 'db.php';
 
 if (isset($_POST['add_product'])) {
-    $sql = "INSERT INTO products (name, sku, category_id, supplier_id, price, description) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        $_POST['name'], $_POST['sku'], $_POST['category_id'], 
-        $_POST['supplier_id'], $_POST['price'], $_POST['description']
-    ]);
-    header("Location: index.php?success=product");
-    exit();
+    try {
+        $pdo->beginTransaction();
+        
+        $sql = "INSERT INTO products (name, sku, category_id, supplier_id, price, description) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $_POST['name'], $_POST['sku'], $_POST['category_id'], 
+            $_POST['supplier_id'], $_POST['price'], $_POST['description']
+        ]);
+                        
+        $product_id = $pdo->lastInsertId();
+        $qty = $_POST['initial_qty'] ?? 0;
+        $warehouse_id = $_POST['warehouse_id'] ?? 1;
+        
+        $inv_sql = "INSERT INTO inventory (product_id, warehouse_id, quantity) VALUES (?, ?, ?)";
+        $pdo->prepare($inv_sql)->execute([$product_id, $warehouse_id, $qty]);
+        
+        $pdo->commit();
+        header("Location: index.php?success=product");
+        exit();
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        die("Error adding product: " . $e->getMessage());
+    }
 }
 
 if (isset($_POST['add_transaction'])) {
@@ -61,7 +77,7 @@ if (isset($_GET['delete_supplier'])) {
 $cat_filter = $_GET['category'] ?? '';
 $wh_filter = $_GET['warehouse'] ?? '';
 
-$query = "SELECT p.product_id, p.name AS product_name, p.sku, c.name AS category_name, 
+$query = "SELECT p.product_id, p.name AS product_name, p.sku, p.price, c.name AS category_name, 
                  s.name AS supplier_name, w.name AS warehouse_name, i.quantity
           FROM inventory i
           JOIN products p ON i.product_id = p.product_id
@@ -101,8 +117,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
 
         <div class="sidebar-tabs" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
             <a href="index.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Inventory Overview</a>
-            <a href="suppliers.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Suppliers</a>
-            <a href="transactions.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Transactions</a>
+            <a href="supplier.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Suppliers</a>
             <a href="warehouses.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Warehouses</a>
         </div>
 
@@ -165,6 +180,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
                     <tr>
                         <th>Product Details</th>
                         <th>Category</th>
+                        <th>Price</th>
                         <th>Warehouse</th>
                         <th>Stock Level</th>
                         <th>Actions</th>
@@ -178,6 +194,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
                             <small style="color: #888;">SKU: <?= htmlspecialchars($item['sku']) ?></small>
                         </td>
                         <td><span class="badge badge-cat"><?= htmlspecialchars($item['category_name']) ?></span></td>
+                        <td><strong>$<?= number_format($item['price'] ?? 0, 2) ?></strong></td>
                         <td> <?= htmlspecialchars($item['warehouse_name']) ?></td>
                         <td>
                             <strong style="color: <?= $item['quantity'] < 10 ? 'var(--danger)' : 'var(--success)' ?>;">
@@ -186,10 +203,11 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
                         </td>
                         <td>
                             <a href="?product_history=<?= $item['product_id'] ?>&category=<?= $cat_filter ?>&warehouse=<?= $wh_filter ?>" class="text-link">History →</a>
+                            <a href="?delete_product=<?= $item['product_id'] ?>" class="text-link" onclick="return confirm('Delete this product and all its records?')" style="color: var(--danger); margin-left: 10px;">Delete</a>
                         </td>
                     </tr>
                     <?php endforeach; else: ?>
-                    <tr><td colspan="5" style="text-align:center; padding:50px;">No inventory found. Try changing filters or adding a transaction.</td></tr>
+                    <tr><td colspan="6" style="text-align:center; padding:50px;">No inventory found. Try changing filters or adding a transaction.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
@@ -250,6 +268,12 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
                 <input type="number" step="0.01" name="price" placeholder="0.00">
                 <label style="color:#333">Description</label>
                 <textarea name="description" rows="3"></textarea>
+                <label style="color:#333">Initial Warehouse</label>
+                <select name="warehouse_id" required>
+                    <?php foreach($warehouses as $w) echo "<option value='{$w['warehouse_id']}'>{$w['name']}</option>"; ?>
+                </select>
+                <label style="color:#333">Initial Quantity</label>
+                <input type="number" name="initial_qty" value="0" min="0" placeholder="0">
                 <button type="submit" name="add_product">Save to Database</button>
                 <button type="button" onclick="this.parentElement.parentElement.parentElement.style.display='none'" style="background:#ccc; margin-top:5px; color:#333">Cancel</button>
             </form>
