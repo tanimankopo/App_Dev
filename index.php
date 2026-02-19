@@ -129,10 +129,8 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1>Inventory Overview</h1>
 
-
-
-            <form method="GET">
-        <div class="filter-group">
+            <form method="GET" style="display: flex; gap: 15px; align-items: flex-end;">
+        <div class="filter-group" style="margin: 0;">
             <label>Category</label>
             <select name="category">
                 <option value="">All Categories</option>
@@ -144,7 +142,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
             </select>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" style="margin: 0;">
             <label>Warehouse</label>
             <select name="warehouse">
                 <option value="">All Locations</option>
@@ -156,25 +154,19 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
             </select>
         </div>
 
-        <button type="submit">Apply Filters</button>
-        <a href="index.php" style="display:block; text-align:center; color:#bdc3c7; margin-top:15px; text-decoration:none; font-size:0.8rem;">Reset Filters</a>
+        <button type="submit" style="margin-bottom: 0;">Apply Filters</button>
+        <a href="index.php" style="display:inline-block; color:#020608; text-decoration:none; font-size:0.9rem; padding: 10px;">Reset Filters</a>
     </form>
-
-
-
-            <div style="display: flex; gap: 10px;">
-
-
-
-
-
-            
-                <button onclick="document.getElementById('prodModal').style.display='flex'" style="width:auto; padding: 10px 20px;">+ New Product</button>
-                <button onclick="document.getElementById('transModal').style.display='flex'" style="width:auto; padding: 10px 20px; background: var(--primary);">+ Stock Movement</button>
-            </div>
         </header>
 
-        <div class="card">
+        <div class="card" style="position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">All Products</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="document.getElementById('prodModal').style.display='flex'" style="width:auto; padding: 10px 20px;">+ New Product</button>
+                    <button onclick="document.getElementById('transModal').style.display='flex'" style="width:auto; padding: 10px 20px; background: var(--primary);">+ Stock Movement</button>
+                </div>
+            </div>
             <table>
                 <thead>
                     <tr>

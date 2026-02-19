@@ -39,13 +39,13 @@ label {
     display: block;
     margin-bottom: 8px;
     font-size: 0.85rem;
-    color: #bdc3c7;
+    color: #020608;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
 select {
-    width: 100%;
+    
     padding: 12px;
     border-radius: 6px;
     border: 1px solid #455a64;
