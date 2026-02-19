@@ -155,7 +155,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
         </div>
 
         <button type="submit" style="margin-bottom: 0;">Apply Filters</button>
-        <a href="index.php" style="display:inline-block; color:#020608; text-decoration:none; font-size:0.9rem; padding: 10px;">Reset Filters</a>
+        <a href="index.php" style="display:inline-block; color:#020608; text-decoration:none; font-size:0.9rem; padding: 10px; font-weight: bold;">Reset Filters</a>
     </form>
         </header>
 

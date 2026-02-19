@@ -63,10 +63,13 @@ $suppliers = $pdo->query("SELECT * FROM suppliers ORDER BY supplier_id DESC")->f
     <main class="main-content">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1>Suppliers Management</h1>
-            <button onclick="openModal()" style="width:auto; padding: 10px 20px;">+ New Supplier</button>
         </header>
 
         <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">All Suppliers</h3>
+                <button onclick="openModal()" style="width:auto; padding: 10px 20px;">+ New Supplier</button>
+            </div>
             <table>
                 <thead>
                     <tr>

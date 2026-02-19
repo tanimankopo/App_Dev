@@ -82,11 +82,13 @@ $all_inventory = $stmt->fetchAll();
     <main class="main-content">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1>Warehouse Management</h1>
-            <button onclick="document.getElementById('whModal').style.display='flex'" style="width:auto; padding: 10px 20px;">+ New Warehouse</button>
         </header>
 
         <div class="card">
-            <h3>All Warehouses Overview</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">All Warehouses Overview</h3>
+                <button onclick="document.getElementById('whModal').style.display='flex'" style="width:auto; padding: 10px 20px;">+ New Warehouse</button>
+            </div>
             <table>
                 <thead>
                     <tr>
