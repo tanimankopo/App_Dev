@@ -40,23 +40,6 @@ if (isset($_POST['add_transaction'])) {
 }   
 
 
-if (isset($_POST['add_supplier'])) {
-    $sql = "INSERT INTO suppliers (name, contact_person, email, phone) VALUES (?, ?, ?, ?)";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        $_POST['s_name'], $_POST['contact'], $_POST['email'], $_POST['phone']
-    ]);
-    header("Location: suppliers.php?success=supplier");
-    exit();
-}
-
-
-if (isset($_GET['delete_supplier'])) {
-     $stmt = $pdo->prepare("DELETE FROM suppliers WHERE supplier_id = ?");
-    $stmt->execute([$_GET['delete_supplier']]);
-    header("Location: suppliers.php?deleted=1");
-    exit();
-}
 
 $cat_filter = $_GET['category'] ?? '';
 $wh_filter = $_GET['warehouse'] ?? '';
@@ -101,7 +84,7 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
 
         <div class="sidebar-tabs" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
             <a href="index.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Inventory Overview</a>
-            <a href="suppliers.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Suppliers</a>
+            <a href="supplier.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Suppliers</a>
             <a href="transactions.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Transactions</a>
             <a href="warehouses.php" style="color: white; text-decoration: none; padding: 8px 0; border-bottom: 1px solid #34495e;">Warehouses</a>
         </div>
@@ -117,43 +100,36 @@ $all_products = $pdo->query("SELECT product_id, name FROM products")->fetchAll()
 
 
             <form method="GET">
-        <div class="filter-group">
-            <label>Category</label>
-            <select name="category">
-                <option value="">All Categories</option>
-                <?php foreach($categories as $cat): ?>
-                    <option value="<?= $cat['category_id'] ?>" <?= $cat_filter == $cat['category_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($cat['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select name="category">
+                        <option value="">All Categories</option>
+                        <?php foreach($categories as $cat): ?>
+                            <option value="<?= $cat['category_id'] ?>" <?= $cat_filter == $cat['category_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-        <div class="filter-group">
-            <label>Warehouse</label>
-            <select name="warehouse">
-                <option value="">All Locations</option>
-                <?php foreach($warehouses as $wh): ?>
-                    <option value="<?= $wh['warehouse_id'] ?>" <?= $wh_filter == $wh['warehouse_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($wh['name']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+                <div class="filter-group">
+                    <label>Warehouse</label>
+                    <select name="warehouse">
+                        <option value="">All Locations</option>
+                        <?php foreach($warehouses as $wh): ?>
+                            <option value="<?= $wh['warehouse_id'] ?>" <?= $wh_filter == $wh['warehouse_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($wh['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-        <button type="submit">Apply Filters</button>
-        <a href="index.php" style="display:block; text-align:center; color:#bdc3c7; margin-top:15px; text-decoration:none; font-size:0.8rem;">Reset Filters</a>
-    </form>
-
-
+                <button type="submit">Apply Filters</button>
+                <a href="index.php" style="display:block; text-align:center; color:#bdc3c7; margin-top:15px; text-decoration:none; font-size:0.8rem;">Reset Filters</a>
+            </form>
 
             <div style="display: flex; gap: 10px;">
 
-
-
-
-
-            
                 <button onclick="document.getElementById('prodModal').style.display='flex'" style="width:auto; padding: 10px 20px;">+ New Product</button>
                 <button onclick="document.getElementById('transModal').style.display='flex'" style="width:auto; padding: 10px 20px; background: var(--primary);">+ Stock Movement</button>
             </div>
